@@ -1,3 +1,7 @@
+.idea
+.posgres-data
+
+
 # Logs
 logs
 *.log
