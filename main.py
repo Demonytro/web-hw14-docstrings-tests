@@ -1,8 +1,9 @@
 import time
+from pathlib import Path
 from typing import Callable
 
 import redis.asyncio as redis
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends, HTTPException, Request, RequestEmail
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -13,13 +14,20 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.conf.config import settings
 from src.database.db import get_db
-from src.routes import owners, cats, auth, users
+from src.routes import contacts, auth, users
 
 app = FastAPI()
 
 
 @app.on_event("startup")
 async def startup():
+    """
+    The startup function is called when the application starts up.
+    It's a good place to initialize things that are needed by your app,
+    such as connecting to databases or initializing caches.
+
+    :return: A coroutine, so we need to call it like this:
+    """
     r = await redis.Redis(host=settings.redis_host, port=settings.redis_port, db=0)
     await FastAPILimiter.init(r)
 
@@ -35,6 +43,15 @@ app.add_middleware(
 
 @app.middleware("http")
 async def user_agent_ban_middleware(request: Request, call_next: Callable):
+    """
+    The user_agent_ban_middleware function is a middleware that checks the user-agent header of an incoming request.
+    If it matches one of the banned user agents, then it returns a 403 Forbidden response. Otherwise, it calls the next
+    middleware in line.
+
+    :param request: Request: Access the request object
+    :param call_next: Callable: Pass the request to the next middleware in line
+    :return: A response
+    """
     user_agent = request.headers.get("user-agent")
     print('----------------------------')
     print(user_agent)
@@ -45,6 +62,14 @@ async def user_agent_ban_middleware(request: Request, call_next: Callable):
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
+    """
+    The add_process_time_header function is a middleware function that adds the time it took to process
+    the request as a header in the response. This can be used to measure performance of an application.
+
+    :param request: Request: Access the request object
+    :param call_next: Call the next function in the pipeline
+    :return: A response object
+    """
     start_time = time.time()
     print(request.client)
     response = await call_next(request)
@@ -53,16 +78,32 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 templates = Jinja2Templates(directory='templates')
-app.mount('/static', StaticFiles(directory='static'), name='static')
+BASE_DIR = Path(__file__).parent
+app.mount('/static', StaticFiles(directory=BASE_DIR / 'static'), name='static')
 
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
+    """
+    The root function is the entry point for the web application.
+    It returns a TemplateResponse object, which renders an HTML template using Jinja2.
+    The template is located in templates/index.html and uses data from request to render itself.
+
+    :param request: Request: Get the request object for the current request
+    :return: A template_response object which renders the template
+    """
     return templates.TemplateResponse('index.html', {"request": request})
 
 
 @app.get("/api/healthchecker")
 def healthchecker(db: Session = Depends(get_db)):
+    """
+    The healthchecker function is a simple function that checks the health of the database.
+    It does this by making a request to the database and checking if it returns any results.
+    If there are no results, then we know something is wrong with our connection.
+
+    :param db: Session: Pass the database session to the function
+    """
     try:
         # Make request
         result = db.execute(text("SELECT 1")).fetchone()
@@ -75,6 +116,5 @@ def healthchecker(db: Session = Depends(get_db)):
 
 
 app.include_router(auth.router, prefix='/api')
-app.include_router(owners.router, prefix="/api")
-app.include_router(cats.router, prefix="/api")
+app.include_router(contacts.router, prefix="/api")
 app.include_router(users.router, prefix='/api')
