@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import DatabaseError
 
 from src.conf.config import settings
 
@@ -14,5 +15,7 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+    except DatabaseError:  # noqa
+        db.rollback()
     finally:
         db.close()

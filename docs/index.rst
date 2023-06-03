@@ -12,7 +12,7 @@ Welcome to Web10 Rest API's documentation!
 
 
 REST API main
-===============
+==========================
 .. automodule:: main
   :members:
   :undoc-members:
@@ -20,7 +20,7 @@ REST API main
 
 
 REST API repository Contacts
-=============================
+===================================
 .. automodule:: src.repository.contacts
   :members:
   :undoc-members:
@@ -28,7 +28,7 @@ REST API repository Contacts
 
 
 REST API repository Users
-==========================
+================================
 .. automodule:: src.repository.users
   :members:
   :undoc-members:
@@ -36,7 +36,7 @@ REST API repository Users
 
 
 REST API routes Contacts
-=========================
+===============================
 .. automodule:: src.routes.contacts
   :members:
   :undoc-members:
@@ -44,7 +44,7 @@ REST API routes Contacts
 
 
 REST API routes Users
-=========================
+==============================
 .. automodule:: src.routes.users
   :members:
   :undoc-members:
@@ -52,7 +52,7 @@ REST API routes Users
 
 
 REST API routes Auth
-=======================
+=============================
 .. automodule:: src.routes.auth
   :members:
   :undoc-members:
@@ -60,7 +60,7 @@ REST API routes Auth
 
 
 REST API service Auth
-=========================
+==============================
 .. automodule:: src.services.auth
   :members:
   :undoc-members:
@@ -68,7 +68,7 @@ REST API service Auth
 
 
 REST API service Email
-=========================
+============================
 .. automodule:: src.services.email
   :members:
   :undoc-members:
@@ -76,7 +76,7 @@ REST API service Email
 
 
 REST API service Upload Avatar
-================================
+===================================
 .. automodule:: src.services.upload_avatar
   :members:
   :undoc-members:

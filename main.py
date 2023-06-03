@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Callable
 
 import redis.asyncio as redis
-from fastapi import FastAPI, Depends, HTTPException, Request, RequestEmail
+from fastapi import FastAPI, Depends, HTTPException, Request         #   , RequestEmail
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
